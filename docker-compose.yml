@@ -1,0 +1,40 @@
+#Preparador de Ambientes El Mondini
+version: "3"
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+    - 2181:2181
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+    - 9092:9092
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "nifi.events.item.created:12:1,nifi.events.item.updated:12:1,nifi.events.primaryItem.created:12:1,_matrix.item.validate:12:1,_matrix.item.validated:12:1,nifi.events.cbPrice.created:12:1,nifi.events.cbPrice.updated:12:1,nifi.events.sbPrice.changed:12:1,_assortment_validated:12:1,_primary_item_validated:12:1,_catalog.product.positionv2:12:1,nifi.events.cbPrice.created:12:1,nifi.events.cbPrice.updated:12:1,cyd.events.destacado.created:12:1,cyd.events.destacado.updated:12:1,cyd.events.destacado.deleted:12:1,cyd.events.destacadoItem.added:12:1,cyd.events.destacadoItem.updated:12:1,cyd.events.destacadoItem.deleted:12:1"
+# ### Criando SQL Server      
+#   sqlserver:
+#     image: mcr.microsoft.com/mssql/server:2017-latest
+#     container_name: sqlserver
+#     environment:
+#       - SA_PASSWORD=Pass@word
+#       - ACCEPT_EULA=Y
+#     ports:
+#       - "1433:1433"
+# ### Criando Ambiente Redis      
+#   redis:
+#     image: redis
+#     container_name: redis-cache
+#     ports:
+#      - "6379:6379"
+  producer-random:
+    build: 
+        context: producer-random
+    environment: 
+        kafkaURL: kafka:9092
+        topic: topic1
+    depends_on:
+    - kafka
